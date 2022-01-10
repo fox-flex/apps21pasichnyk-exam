@@ -1,6 +1,8 @@
 package json;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 /**
  * Created by Andrii_Rodionov on 1/3/2017.
@@ -9,26 +11,23 @@ public class JsonObject extends Json {
     HashMap<String, Json> dict;
 
     public JsonObject(JsonPair... jsonPairs) {
-        dict = new HashMap<>();
-        for (JsonPair jsonPair : jsonPairs) {
-            dict.put(jsonPair.key, jsonPair.value);
-        }
+        dict = Arrays.stream(jsonPairs)
+                .collect(Collectors.toMap(
+                        x -> x.key,
+                        x -> x.value,
+                        (prev, next) -> next,
+                        HashMap::new)
+                );
     }
 
     @Override
     public String toJson() {
-        StringBuilder res = new StringBuilder("{");
-        String prefix = "";
-        for (String key : dict.keySet()) {
-            res.append(prefix);
-            prefix = ",";
-            res.append('\'')
-                    .append(key)
-                    .append("': ")
-                    .append(dict.get(key).toJson());
-        }
-        res.append('}');
-        return res.toString();
+        return '{' +
+                dict.entrySet()
+                        .stream()
+                        .map(entry -> entry.getKey() + ": " + entry.getValue().toJson())
+                        .collect(Collectors.joining(", ")) +
+                '}';
     }
 
     public void add(JsonPair jsonPair) {
