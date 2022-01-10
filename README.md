@@ -1,2 +1,2 @@
-# OOP 2022 exam
+# OOP 2021(2022) exam
 by Mykhailo Pasichnyk
